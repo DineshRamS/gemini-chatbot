@@ -2,12 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const API_KEY = process.env.GEMINI_API_KEY;
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-
-const API_KEY = "AIzaSyA4gMBDy_V5l7GH7S8PzHnRplh3mDJ60nA"; // 🔐 Replace with your real key
 
 app.post("/chat", async (req, res) => {
   try {
@@ -29,6 +28,8 @@ app.post("/chat", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("✅ Server running at http://localhost:3000");
+// ✅ Use dynamic port for Render deployment
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
 });
