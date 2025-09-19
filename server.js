@@ -21,37 +21,32 @@ app.post("/chat", async (req, res) => {
     }
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta1/models/gemini-pro:generateContent?key=${API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: userMessage }] }]
-        })
-      }
-    );
-
-    const rawText = await response.text();
-    console.log("📨 Raw Gemini response:", rawText);
-
-    if (!response.ok || !rawText) {
-      console.error(`❌ Gemini API returned status ${response.status}`);
-      return res.status(500).json({ reply: "Gemini API error or empty response" });
-    }
-
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch (parseError) {
-      console.error("❌ Failed to parse Gemini response:", parseError);
-      return res.status(500).json({ reply: "Invalid response from Gemini API" });
-    }
-
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Gemini did not return a valid reply";
-    res.json({ reply });
-
-  } catch (error) {
-    console.error("❌ Error in Gemini API call:", error);
-    res.status(500).json({ reply: "Error fetching response" });
+  `https://generativelanguage.googleapis.com/v1beta1/models/gemini-pro:generateContent?key=${API_KEY}`,
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: userMessage }] }]
+    })
   }
-});
+);
+
+const rawText = await response.text();
+console.log("📨 Raw Gemini response:", rawText);
+
+if (!response.ok || !rawText) {
+  console.error(`❌ Gemini API returned status ${response.status}`);
+  return res.status(500).json({ reply: "Gemini API error or empty response" });
+}
+
+let data;
+try {
+  data = JSON.parse(rawText);
+} catch (parseError) {
+  console.error("❌ Failed to parse Gemini response:", parseError);
+  return res.status(500).json({ reply: "Invalid response from Gemini API" });
+}
+
+// Extract reply from parsed data
+const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No reply from Gemini";
+res.json({ reply });
