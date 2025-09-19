@@ -31,9 +31,15 @@ app.post("/chat", async (req, res) => {
       }
     );
 
-    const data = await response.json();
-    console.log("📨 Gemini response:", JSON.stringify(data, null, 2));
+    const rawText = await response.text(); // Get raw response
+    console.log("📨 Raw Gemini response:", rawText);
 
+    if (!response.ok) {
+      console.error(`❌ Gemini API returned status ${response.status}`);
+      return res.status(500).json({ reply: "Gemini API error" });
+    }
+
+    const data = JSON.parse(rawText); // Now safely parse
     const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Gemini did not return a valid reply";
     res.json({ reply });
 
@@ -41,10 +47,4 @@ app.post("/chat", async (req, res) => {
     console.error("❌ Error in Gemini API call:", error);
     res.status(500).json({ reply: "Error fetching response" });
   }
-});
-
-// ✅ Use dynamic port for Render deployment
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
 });
