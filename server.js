@@ -31,15 +31,17 @@ app.post("/chat", async (req, res) => {
       }
     );
 
-    const rawText = await response.text(); // Get raw response
+    const rawText = await response.text();
     console.log("📨 Raw Gemini response:", rawText);
 
-    if (!response.ok) {
-      console.error(`❌ Gemini API returned status ${response.status}`);
-      return res.status(500).json({ reply: "Gemini API error" });
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (parseError) {
+      console.error("❌ Failed to parse Gemini response:", parseError);
+      return res.status(500).json({ reply: "Invalid response from Gemini API" });
     }
 
-    const data = JSON.parse(rawText); // Now safely parse
     const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Gemini did not return a valid reply";
     res.json({ reply });
 
