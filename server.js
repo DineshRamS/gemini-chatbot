@@ -20,18 +20,28 @@ app.post("/chat", async (req, res) => {
       return res.status(500).json({ reply: "Server misconfigured: missing API key" });
     }
 
-const response = await fetch(
-  `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`
-,
-  {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: userMessage }] }]
-    })
-  }
-);
+    // ✅ Construct Gemini request body
+    const requestBody = {
+      contents: [
+        {
+          parts: [
+            { text: userMessage }
+          ]
+        }
+      ]
+    };
 
+    console.log("📨 Gemini request body:", requestBody);
+
+    // ✅ Send request to Gemini API
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody)
+      }
+    );
 
     const rawText = await response.text();
     console.log("📨 Raw Gemini response:", rawText);
@@ -49,8 +59,9 @@ const response = await fetch(
       return res.status(500).json({ reply: "Invalid response from Gemini API" });
     }
 
-    // Extract reply from parsed data
+    // ✅ Extract reply from Gemini response
     const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No reply from Gemini";
+    console.log("💬 Gemini reply:", reply);
     res.json({ reply });
 
   } catch (error) {
