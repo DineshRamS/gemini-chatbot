@@ -21,7 +21,8 @@ app.post("/chat", async (req, res) => {
     }
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-pro-vision:generateContent?key=${API_KEY}`
+,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -36,7 +37,7 @@ app.post("/chat", async (req, res) => {
 
     if (!response.ok || !rawText) {
       console.error(`❌ Gemini API returned status ${response.status}`);
-      return res.status(500).json({ reply: "Gemini API error or empty response" });
+      return res.status(500).json({ reply: `Gemini: API error: ${response.status} empty response` });
     }
 
     let data;
