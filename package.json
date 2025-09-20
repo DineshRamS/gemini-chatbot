@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "scripts": {
+  "scrigit add package.jsonpts": {
   "start": "node server.js"
 },
 
