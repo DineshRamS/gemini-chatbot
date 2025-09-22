@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/" # Root directory of your Python project
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    rebase-strategy: "auto"
+    ignore:
+      - dependency-name: "some-package"
+        versions: ["<1.0.0"]
