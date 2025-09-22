@@ -14,7 +14,8 @@ async function sendMessage() {
   document.getElementById("user-input").value = "";
 
   try {
-    const response = await fetch("https://gemini-chatbot.onrender.com/chat", {
+    const response = await fetch("https://gemini-chatbot-2g6x.onrender.com", {
+
 
 
       method: "POST",
