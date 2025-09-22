@@ -15,25 +15,7 @@ app.post("/chat", async (req, res) => {
     const userMessage = req.body.message;
     console.log("📩 Incoming message:", userMessage);
 
-    if (!API_KEY) {
-      console.error("❌ Missing Gemini API key");
-      return res.status(500).json({ reply: "Server misconfigured: missing API key" });
-    }
-
-    // ✅ Construct Gemini request body
-    const requestBody = {
-      contents: [
-        {
-          parts: [
-            { text: userMessage }
-          ]
-        }
-      ]
-    };
-
-    console.log("📨 Gemini request body:", requestBody);
-
-    // ✅ Send request to Gemini API
+  try {
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`,
       {
