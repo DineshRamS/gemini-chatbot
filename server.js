@@ -1,47 +1,45 @@
-require('dotenv').config();
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const path = require("path");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+console.log("📄 Looking for .env at:", path.resolve(__dirname, ".env"));
+dotenv.config({ path: path.resolve(__dirname, ".env") });
+
+console.log("🔑 Loaded API key:", process.env.GOOGLE_API_KEY);
+console.log("📁 Current directory:", __dirname);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const GEMINI_API_KEY = process.env.GOOGLE_API_KEY;
-
 app.use(cors());
 app.use(express.json());
 
-app.post('/chat', async (req, res) => {
-  const userMessage = req.body.message;
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
-  if (!userMessage) {
-    console.error('❌ No message provided in request body');
-    return res.status(400).json({ error: 'Message is required' });
-  }
+app.post("/api/gemini", async (req, res) => {
+  const { prompt } = req.body;
 
   try {
-    const response = await axios.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
-      {
-        contents: [{ parts: [{ text: userMessage }] }]
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${GEMINI_API_KEY}`
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const result = await model.generateContent({
+      contents: [
+        {
+          parts: [{ text: prompt }]
         }
-      }
-    );
+      ]
+    });
 
-    const reply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || '🤖 No response from Gemini';
-    console.log('✅ Gemini response:', reply);
-    res.json({ reply });
+    const response = await result.response;
+    const text = response.text();
 
+    res.send({ reply: text });
   } catch (error) {
-    console.error('🔥 Gemini API error:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Failed to get response from Gemini API' });
+    console.error("🔥 Gemini API error:", error.message);
+    console.error("📦 Full error:", error);
+    res.status(500).json({ error: "Failed to get response from Gemini API" });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+app.listen(3000, () => {
+  console.log("🚀 Server running on http://localhost:3000");
 });
