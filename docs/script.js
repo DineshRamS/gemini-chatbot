@@ -14,13 +14,10 @@ async function sendMessage() {
   document.getElementById("user-input").value = "";
 
   try {
-    const response = await fetch("https://gemini-chatbot-2g6x.onrender.com", {
-
-
-
+    const response = await fetch("http://localhost:3000/api/gemini", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: input })
+      body: JSON.stringify({ prompt: input })
     });
 
     const data = await response.json();
@@ -42,14 +39,4 @@ async function sendMessage() {
 
   // Scroll to bottom
   chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-// Typing animation function
-function typeReply(text, container) {
-  let i = 0;
-  const interval = setInterval(() => {
-    container.innerHTML += text.charAt(i);
-    i++;
-    if (i >= text.length) clearInterval(interval);
-  }, 30); // Adjust typing speed here
 }
