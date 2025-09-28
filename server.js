@@ -4,10 +4,17 @@ const dotenv = require("dotenv");
 const path = require("path");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-console.log("📄 Looking for .env at:", path.resolve(__dirname, ".env"));
+// Load environment variables securely
+console.log("📄 Loading .env from:", path.resolve(__dirname, ".env"));
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
-console.log("🔑 Loaded API key:", process.env.GOOGLE_API_KEY);
+// Avoid logging sensitive values
+if (!process.env.GOOGLE_API_KEY) {
+  console.error("❌ GOOGLE_API_KEY is missing. Check your .env file.");
+  process.exit(1);
+}
+
+console.log("✅ Environment loaded");
 console.log("📁 Current directory:", __dirname);
 
 const app = express();
