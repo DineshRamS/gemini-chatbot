@@ -41,10 +41,11 @@ app.post("/api/gemini", async (req, res) => {
 
     res.status(200).json({ reply: text });
   } catch (error) {
-    console.error("🔥 Gemini API error:", error.message);
-    console.error("📦 Full error:", error);
-    res.status(500).json({ error: "Failed to get response from Gemini API" });
-  }
+  console.error("🔥 Gemini API error:", error.message);
+  console.error("📦 Full error object:", error);
+  res.status(500).json({ error: error.message || "Unknown error" });
+}
+
 });
 
 // 🌐 Health check route
