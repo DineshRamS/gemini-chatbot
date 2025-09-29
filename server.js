@@ -30,7 +30,12 @@ app.post("/api/gemini", async (req, res) => {
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({
+  model: "gemini-pro",
+  generationConfig: {},
+  safetySettings: [],
+  apiVersion: "v1"
+});
 
     const result = await model.generateContent({
       contents: [{ parts: [{ text: prompt }] }]
