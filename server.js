@@ -30,24 +30,22 @@ app.post("/api/gemini", async (req, res) => {
   }
 
   try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-pro",
-      apiVersion: "v1"
-    });
+  const model = genAI.getGenerativeModel({
+    model: "gemini-pro",
+    apiVersion: "v1"
+  });
 
-    const result = await model.generateContent({
-      contents: [{ parts: [{ text: prompt }] }]
-    });
+  const result = await model.generateContent(req.body.prompt);
+  const response = await result.response;
+  const text = response.text();
 
-    const response = await result.response;
-    const text = response.text();
+  res.status(200).json({ reply: text });
+} catch (error) {
+  console.error("🔥 Gemini API error:", error.message);
+  console.error("📦 Full error object:", error);
+  res.status(500).json({ error: error.message || "Unknown error" });
+}
 
-    res.status(200).json({ reply: text });
-  } catch (error) {
-    console.error("🔥 Gemini API error:", error.message);
-    console.error("📦 Full error object:", error);
-    res.status(500).json({ error: error.message || "Unknown error" });
-  }
 });
 
 // 🌐 Health check route
